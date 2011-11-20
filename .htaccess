@@ -1,0 +1,5 @@
+
+RewriteEngine on
+RewriteBase /i01/rssgrabber
+RewriteRule ^(.*).xml$       /i01/rssgrabber/rssgrabber.php?id=$1
+
