@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 require_once('rss.php');
 
 class VladimirKP {
-    var $url = 'http://vladimir.kp.ru/';
+    var $url = 'http://vladimir.old.kp.ru/';
     var $insideItem = FALSE;
     var $insideTitle = FALSE;
     var $parsedTitle = FALSE;
@@ -38,7 +38,7 @@ class VladimirKP {
         if ($name == 'HTML') RSSWriter::beginRSS(
             'windows-1251', 
             'Комсомольская правда Владимир', 
-            'http://vladimir.kp.ru/', 
+            'http://vladimir.old.kp.ru/', 
             'Новостная лента.', 
             'ru');
         
@@ -54,7 +54,7 @@ class VladimirKP {
         and $name == 'a'
         and $attrs['class'] == 'r') {
             RSSWriter::beginLink();
-            RSSWriter::putLink('http://vladimir.kp.ru' . $attrs['href']);
+            RSSWriter::putLink('http://vladimir.old.kp.ru' . $attrs['href']);
             RSSWriter::endLink();
             $this->parsedLink = TRUE;
         }

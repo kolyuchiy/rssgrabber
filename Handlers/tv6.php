@@ -40,8 +40,8 @@ class TV6 {
             'ru');
         
         if (!$this->insideItem
-        and $name == 'div' 
-        and $attrs['class'] == 'zag_news') {
+        and $name == 'a' 
+        and $attrs['class'] == 'news_zag') {
             RSSWriter::beginItem();
             $this->insideItem = TRUE;
             RSSWriter::beginTitle();
@@ -52,17 +52,25 @@ class TV6 {
         and $this->parsedTitle
         and !$this->parsedDescription
         and $name == 'div'
-        and $attr['class'] =~ "txt_news") {
+        and $attr['class'] =~ "data") {
             RSSWriter::beginDescription();
             $this->insideDescription = TRUE;
         }
 
         if ($this->insideItem
+        and $this->insideDescription
+        and $name == 'br') {
+            RSSWriter::endDescription();
+            $this->insideDescription = FALSE;
+            $this->parsedDescription = TRUE;
+        }
+
+        if ($this->insideItem
         and !$this->parsedLink
         and $name == 'a'
-        and $attrs['class'] == 'more') {
+        and $attrs['class'] == 'koment') {
             RSSWriter::beginLink();
-            RSSWriter::putLink('http://6tv.ru' . $attrs['href']);
+            RSSWriter::putLink($attrs['href']);
             RSSWriter::endLink();
             $this->parsedLink = TRUE;
         }
@@ -74,18 +82,10 @@ class TV6 {
 
         if ($this->insideItem
         and $this->insideTitle
-        and $name == 'div') {
+        and $name == 'a') {
             RSSWriter::endTitle();
             $this->insideTitle = FALSE;
             $this->parsedTitle = TRUE;
-        }
-
-        if ($this->insideItem
-        and $this->insideDescription
-        and $name == 'div') {
-            RSSWriter::endDescription();
-            $this->insideDescription = FALSE;
-            $this->parsedDescription = TRUE;
         }
 
         if ($this->insideItem 

@@ -1,5 +1,8 @@
 
+AddDefaultCharset utf-8
+
 RewriteEngine on
-RewriteBase /i01/rssgrabber
-RewriteRule ^(.*).xml$       /i01/rssgrabber/rssgrabber.php?id=$1
+RewriteBase /rss
+RewriteRule ^(.*).v2.xml$       /rss/dom.php?id=$1
+RewriteRule ^(.*).xml$       /rss/rssgrabber.php?id=$1
 

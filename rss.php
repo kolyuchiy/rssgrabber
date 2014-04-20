@@ -97,6 +97,21 @@ xml;
         echo $data;
     }
 
+    function doItem($link, $title, $description = NULL) {
+    	print "
+    	<item>
+    		<link>$link</link>
+    		<title>$title</title>
+    		";
+    	if (isset($description)) {
+    		print "
+    		<description>$description</description>
+    		";
+    	}
+    	print "
+    	</item>
+    	";
+    }
 }
 
 ?>

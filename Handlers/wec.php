@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     require_once('rss.php');
 
     class Wec {
-        var $url = 'http://wec.ru/newsreg/';
+        var $url = 'http://wec.ru/?f_id=1&menu_id=1';
         var $insideItem = FALSE;
         var $insideTitle = FALSE;
         var $parsedTitle = FALSE;
@@ -32,16 +32,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         var $parsedLink = FALSE;
 
         function openHandler(& $parser,$name,$attrs) {
-            if ($name == 'HTML') RSSWriter::beginRSS(
+            if ($name == 'html') RSSWriter::beginRSS(
                 'windows-1251', 
                 'WEC.ru', 
-                'http://wec.ru/newreg/', 
+                htmlspecialchars('http://wec.ru/?f_id=1&menu_id=1'), 
                 'Новостная лента.', 
                 'ru');
-        
+       
+            // <a class="text_bold" 
             if (!$this->insideItem
-            and $name == 'div' 
-            and $attrs['id'] == 'date') {
+            and $name == 'a' 
+            and $attrs['class'] == 'text_bold') {
                 RSSWriter::beginItem();
                 $this->insideItem = TRUE;
             }
@@ -50,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             and !$this->parsedLink
             and $name == 'a') {
                 RSSWriter::beginLink();
-                RSSWriter::putLink($attrs['href']);
+                RSSWriter::putLink(htmlspecialchars('http://wec.ru/' . $attrs['href']));
                 RSSWriter::endLink();
                 $this->parsedLink = TRUE;
             }
@@ -63,11 +64,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 $this->insideTitle = TRUE;
             }
 
+            // <div class="text">
             if ($this->insideItem
             and $this->parsedTitle
             and !$this->parsedDescription
             and $name == 'div'
-            and $attr['id'] =~ "news") {
+            and $attr['class'] =~ "text") {
                 RSSWriter::beginDescription();
                 $this->insideDescription = TRUE;
             }
@@ -79,7 +81,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
             if ($this->insideItem
             and $this->insideTitle
-            and $name == 'a') {
+            and $name == 'div') {
                 RSSWriter::endTitle();
                 $this->insideTitle = FALSE;
                 $this->parsedTitle = TRUE;

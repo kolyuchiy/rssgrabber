@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 require_once('rss.php');
 
 class DeFakto {
-    var $url = 'http://www.ketis.ru/defakto.php';
+    var $url = 'http://www.ketis.ru/';
     var $insideItem = FALSE;
     var $insideTitle = FALSE;
     var $parsedTitle = FALSE;
@@ -34,10 +34,10 @@ class DeFakto {
     function openHandler(& $parser,$name,$attrs) {
         if ($name == 'html') RSSWriter::beginRSS('windows-1251', 'Де-Факто (КЭТИС)', $this->url, 'Владимирские новости.', 'ru');
         
-        // <img alt="" src="defakto.php_files/addnews.gif"
+        // <table border="0" cellpadding="1" cellspacing="0" class="newstable">
         if (!$this->insideItem
-        and $name == 'img' 
-        and $attrs['src'] == 'http://www.ketis.ru/news/skins/images/addnews.gif') {
+        and $name == 'table' 
+        and $attrs['class'] == 'newstable') {
             RSSWriter::beginItem();
             $this->insideItem = TRUE;
         }
@@ -49,21 +49,23 @@ class DeFakto {
             $this->insideTitle = TRUE;
         }
 
-        // <font style="font-family: verdana,arial,sans-serif; color: rgb(102, 102, 102); font-size: 11px;">
+        // <td class="newstd1" colspan="2">
         if ($this->insideItem
         and $this->parsedTitle
         and !$this->parsedDescription
-        and $name == 'font'
-        and $attr['style'] =~ "font-family: verdana, arial, sans-serif; color:#666; font-size: 11;") {
+        and $name == 'td'
+        and $attr['class'] =~ "newstd1") {
             RSSWriter::beginDescription();
             $this->insideDescription = TRUE;
             $this->parsedDescription = TRUE;
         }
 
         if ($this->insideItem
-        and $this->parsedDescription
         and !$this->parsedLink
         and $name == 'a') {
+            RSSWriter::endDescription();
+            $this->insideDescription = FALSE;
+
             RSSWriter::beginLink();
             RSSWriter::putLink('http://www.ketis.ru' . $attrs['href']);
             RSSWriter::endLink();
@@ -94,9 +96,7 @@ class DeFakto {
 
         if ($this->insideItem
         and $this->insideDescription
-        and $name == 'font') {
-            RSSWriter::endDescription();
-            $this->insideDescription = FALSE;
+        and $name == 'td') {
         }
     }
     
